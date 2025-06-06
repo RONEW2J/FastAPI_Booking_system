@@ -1,163 +1,163 @@
 # 🏢 Booking System
 
-Современная система бронирования с календарем занятости и уведомлениями.
+A modern booking system with an availability calendar and notifications.
 
-## 🚀 Технологии
+## 🚀 Technologies
 
-- **FastAPI** - современный веб-фреймворк для Python
-- **PostgreSQL** - надежная реляционная база данных
-- **Redis** - кеширование и брокер для Celery
-- **RabbitMQ** - очередь сообщений
-- **Celery** - обработка фоновых задач
-- **Docker** - контейнеризация
-- **Alembic** - миграции базы данных
+- **FastAPI** - modern web framework for Python
+- **PostgreSQL** - reliable relational database
+- **Redis** - caching and broker for Celery
+- **RabbitMQ** - message queue
+- **Celery** - background task processing
+- **Docker** - containerization
+- **Alembic** - database migrations
 
-## 📋 Возможности
+## 📋 Features
 
-### 🔐 Аутентификация
+### 🔐 Authentication
 
-- Регистрация и авторизация пользователей
-- JWT токены для безопасности
-- Защищенные эндпоинты
+- User registration and authorization
+- JWT tokens for security
+- Protected endpoints
 
-### 📅 Бронирование
+### 📅 Booking
 
-- Создание, просмотр и отмена бронирований
-- Проверка доступности ресурсов
-- Календарь занятости с кешированием
+- Create, view, and cancel bookings
+- Check resource availability
+- Availability calendar with caching
 
-### 🔔 Уведомления
+### 🔔 Notifications
 
-- Email-подтверждения бронирований
-- Напоминания о предстоящих встречах
-- Автоматическая очистка просроченных броней
+- Email booking confirmations
+- Reminders for upcoming meetings
+- Automatic cleanup of expired bookings
 
-### 🎯 Администрирование
+### 🎯 Administration
 
-- Управление ресурсами
-- Статистика бронирований
-- Мониторинг системы
+- Resource management
+- Booking statistics
+- System monitoring
 
-## 🛠 Установка и запуск
+## 🛠 Installation and Setup
 
-### Предварительные требования
+### Prerequisites
 
-- Docker и Docker Compose
-- Python 3.11+ (для локальной разработки)
+- Docker and Docker Compose
+- Python 3.11+ (for local development)
 
-### Быстрый старт
+### Quick Start
 
-1. **Клонируйте репозиторий:**
+1. **Clone the repository:**
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/RONEW2J/FastAPI_Booking_system
 cd booking_system
 ```
 
-2. **Настройте окружение:**
+2. **Configure environment:**
 
 ```bash
 cp .env.example .env
-# Отредактируйте .env файл с вашими настройками
+# Edit .env file with your settings
 ```
 
-3. **Запустите систему:**
+3. **Launch the system:**
 
 ```bash
 chmod +x scripts/setup.sh
 ./scripts/setup.sh
 ```
 
-### Ручная установка
+### Manual Installation
 
-1. **Запустите сервисы:**
+1. **Start services:**
 
 ```bash
 docker-compose up -d
 ```
 
-2. **Выполните миграции:**
+2. **Run migrations:**
 
 ```bash
 docker-compose exec app alembic upgrade head
 ```
 
-3. **Проверьте статус:**
+3. **Check status:**
 
 ```bash
 docker-compose ps
 ```
 
-## 🌐 Эндпоинты API
+## 🌐 API Endpoints
 
-### Аутентификация
+### Authentication
 
-- `POST /auth/register` - Регистрация
-- `POST /auth/token` - Получение токена
+- `POST /auth/register` - Registration
+- `POST /auth/token` - Get token
 
-### Ресурсы
+### Resources
 
-- `GET /resources/` - Список ресурсов
-- `POST /resources/` - Создание ресурса
+- `GET /resources/` - List resources
+- `POST /resources/` - Create resource
 
-### Бронирования
+### Bookings
 
-- `GET /bookings/` - Мои бронирования
-- `POST /bookings/` - Создать бронирование
-- `GET /bookings/{id}` - Детали бронирования
-- `DELETE /bookings/{id}` - Отменить бронирование
+- `GET /bookings/` - My bookings
+- `POST /bookings/` - Create booking
+- `GET /bookings/{id}` - Booking details
+- `DELETE /bookings/{id}` - Cancel booking
 
-### Календарь
+### Calendar
 
-- `GET /calendar/{resource_id}` - Календарь ресурса
-- `GET /calendar/{resource_id}/availability` - Проверка доступности
+- `GET /calendar/{resource_id}` - Resource calendar
+- `GET /calendar/{resource_id}/availability` - Check availability
 
-### Администрирование
+### Administration
 
-- `GET /admin/bookings/` - Все бронирования
-- `GET /admin/stats/` - Статистика
+- `GET /admin/bookings/` - All bookings
+- `GET /admin/stats/` - Statistics
 
-## 🧪 Тестирование
+## 🧪 Testing
 
-Запустите тестовый скрипт:
+Run the test script:
 
 ```bash
 python scripts/test_api.py
 ```
 
-## 📚 Документация
+## 📚 Documentation
 
-После запуска системы доступна интерактивная документация:
+After system launch, interactive documentation is available at:
 
 - **Swagger UI**: http://localhost:8000/docs
 - **ReDoc**: http://localhost:8000/redoc
 
-## 🔧 Мониторинг
+## 🔧 Monitoring
 
-### Веб-интерфейсы
+### Web Interfaces
 
 - **RabbitMQ Management**: http://localhost:15672
-- **Приложение**: http://localhost:8000
+- **Application**: http://localhost:8000
 
-### Логи
+### Logs
 
 ```bash
-# Логи приложения
+# Application logs
 docker-compose logs -f app
 
-# Логи Celery
+# Celery logs
 docker-compose logs -f celery_worker
 
-# Логи всех сервисов
+# All services logs
 docker-compose logs -f
 ```
 
-## ⚙️ Конфигурация
+## ⚙️ Configuration
 
-Основные настройки в файле `.env`:
+Main settings in `.env` file:
 
 ```env
-# База данных
+# Database
 DATABASE_URL=postgresql://user:pass@localhost:5432/db
 
 # Redis
@@ -177,7 +177,7 @@ SMTP_USER=your-email@gmail.com
 SMTP_PASSWORD=your-app-password
 ```
 
-## 🔄 Архитектура
+## 🔄 Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -204,20 +204,20 @@ SMTP_PASSWORD=your-app-password
                         └─────────────────┘
 ```
 
-## 🤝 Разработка
+## 🤝 Development
 
-### Добавление новых задач Celery
+### Adding New Celery Tasks
 
-1. Создайте задачу в `app/tasks/`:
+1. Create a task in `app/tasks/`:
 
 ```python
 @celery_app.task
 def my_task(param):
-    # Логика задачи
+    # Task logic
     return "Result"
 ```
 
-2. Импортируйте в `celery_app.py`:
+2. Import in `celery_app.py`:
 
 ```python
 celery_app.conf.update(
@@ -225,22 +225,22 @@ celery_app.conf.update(
 )
 ```
 
-### Добавление новых эндпоинтов
+### Adding New Endpoints
 
-1. Создайте схемы в `app/schemas/`
-2. Добавьте модели в `app/models/`
-3. Реализуйте логику в `app/services/`
-4. Добавьте эндпоинты в `app/main.py`
+1. Create schemas in `app/schemas/`
+2. Add models in `app/models/`
+3. Implement logic in `app/services/`
+4. Add endpoints in `app/main.py`
 
-## 📝 Лицензия
+## 📝 License
 
 MIT License
 
-## 🆘 Поддержка
+## 🆘 Support
 
-Если у вас возникли вопросы или проблемы:
+If you have questions or issues:
 
-1. Проверьте логи: `docker-compose logs`
-2. Убедитесь, что все сервисы запущены: `docker-compose ps`
-3. Проверьте настройки в `.env` файле
-4. Создайте issue в репозитории
+1. Check logs: `docker-compose logs`
+2. Ensure all services are running: `docker-compose ps`
+3. Verify settings in `.env` file
+4. Create an issue in the repository
