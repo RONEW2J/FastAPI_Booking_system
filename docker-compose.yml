@@ -1,0 +1,98 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: booking_db
+      POSTGRES_USER: booking_user
+      POSTGRES_PASSWORD: booking_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U booking_user -d booking_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis (Cache + Celery broker)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  # RabbitMQ (Message broker)
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: booking_user
+      RABBITMQ_DEFAULT_PASS: booking_pass
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  # FastAPI Application
+  app:
+    build: .
+    working_dir: /code
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://booking_user:booking_pass@db:5432/booking_db
+      - REDIS_URL=redis://redis:6379/0
+      - RABBITMQ_URL=amqp://booking_user:booking_pass@rabbitmq:5672/
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    volumes:
+      - .:/code
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload 
+
+  # Celery Worker
+  celery_worker:
+    build: .
+    working_dir: /code
+    environment:
+      - DATABASE_URL=postgresql://booking_user:booking_pass@db:5432/booking_db
+      - REDIS_URL=redis://redis:6379/0
+      - RABBITMQ_URL=amqp://booking_user:booking_pass@rabbitmq:5672/
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    volumes:
+      - .:/code
+    command: celery -A app.tasks.celery_app worker --loglevel=info 
+
+
+  # Celery Beat (Scheduler)
+  celery_beat:
+    build: .
+    working_dir: /code
+    environment:
+      - DATABASE_URL=postgresql://booking_user:booking_pass@db:5432/booking_db
+      - REDIS_URL=redis://redis:6379/0
+      - RABBITMQ_URL=amqp://booking_user:booking_pass@rabbitmq:5672/
+    depends_on:
+      - app
+    volumes:
+      - .:/code
+    command: celery -A app.tasks.celery_app beat --loglevel=info
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
